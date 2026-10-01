@@ -1,0 +1,254 @@
+/* ──────────────────────────────────────────────────────────────────
+   RAWA Design System — Colours & Type tokens
+   Sources:
+   • Figma "RAWA Design System 1.0"
+   • Brand Guidelines v1.0 (Nov 2025) — RAWA New Branding FINAL 2026
+   Typeface: Plus Jakarta Sans (variable, self-hosted)
+   ────────────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("fonts/PlusJakartaSans-VariableFont_wght.ttf") format("truetype-variations"),
+       url("fonts/PlusJakartaSans-VariableFont_wght.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("fonts/PlusJakartaSans-Italic-VariableFont_wght.ttf") format("truetype-variations"),
+       url("fonts/PlusJakartaSans-Italic-VariableFont_wght.ttf") format("truetype");
+}
+
+:root {
+  /* ── PRIMARY PALETTE (corporate) ─────────────────────────────────
+     Per Brand Guidelines §4.1 — used for corporate/government work
+     and as the foundation of every brand surface.                    */
+  --rawa-navy:        #004576;   /* PMS 654C   • CMYK 100/75/29/13   */
+  --rawa-aqua:        #80CDC7;   /* PMS 7472C  • CMYK 48/0/29/0      */
+  --rawa-aqua-60:     #B3E1DD;   /* tint — preferred                  */
+  --rawa-aqua-30:     #D9F0EE;   /* tint — preferred                  */
+
+  /* Legacy / extended primaries kept for compatibility with the
+     existing Figma component library (slightly different navies and
+     blues used in the in-product UI). */
+  --rawa-navy-deep:   #002742;
+  --rawa-blue:        #0062A8;
+  --rawa-blue-bright: #0080DB;
+  --rawa-aqua-soft:   #5ABEB6;
+  --rawa-aqua-pale:   #C8E9E7;
+
+  /* ── SECONDARY PALETTE (marketing only) ─────────────────────────
+     Per §4.2 — bright, hopeful palette. Always pair with Navy or
+     Dark Navy text. Never on white, never combine secondaries.       */
+  --rawa-lemon:       #FFE093;
+  --rawa-lemon-60:    #FFECBE;
+  --rawa-lemon-30:    #FFF6DF;
+
+  --rawa-lavender:    #D4C6E7;
+  --rawa-lavender-60: #E5DDF1;
+  --rawa-lavender-30: #F2EEF8;
+
+  --rawa-mint:        #C6E5B4;
+  --rawa-mint-60:     #DDEFD2;
+  --rawa-mint-30:     #EEF7E8;
+
+  --rawa-peach:       #FFB38C;
+  --rawa-peach-60:    #FFC6A6;
+  --rawa-peach-30:    #FFE2D2;
+
+  /* ── TERTIARY PALETTE (illustrations / charts only) ─────────────
+     Per §4.3 — never used for text or backgrounds. No tints.         */
+  --rawa-dark-navy:    #1C2D4C;  /* tertiary of Navy     */
+  --rawa-dark-teal:    #1F8381;  /* tertiary of Aqua     */
+  --rawa-forest-green: #1D4F45;  /* tertiary of Mint     */
+  --rawa-golden-sun:   #9D6C27;  /* tertiary of Lemon    */
+  --rawa-rustic-orchid:#674367;  /* tertiary of Lavender */
+  --rawa-burnt-umber:  #B94F3D;  /* tertiary of Peach    */
+
+  /* ── SEMANTIC ────────────────────────────────────────────────── */
+  --rawa-error:       #B20000;
+  --rawa-success:     var(--rawa-forest-green);
+  --rawa-warning:     var(--rawa-golden-sun);
+
+  /* ── NEUTRALS ────────────────────────────────────────────────── */
+  --rawa-black:       #000000;
+  --rawa-ink:         #1A1A1A;
+  --rawa-grey-700:    #4D4D4D;
+  --rawa-grey-600:    #666666;
+  --rawa-grey-500:    #999999;
+  --rawa-grey-400:    #B2B2B2;
+  --rawa-grey-300:    #CCCCCC;
+  --rawa-grey-200:    #F2F2F2;
+  --rawa-grey-100:    #FAFAFA;
+  --rawa-white:       #FFFFFF;
+  --rawa-white-warm:  #FEFEFE;
+
+  /* ── SEMANTIC SURFACE ROLES ──────────────────────────────────── */
+  --bg-canvas:        var(--rawa-navy);
+  --bg-canvas-alt:    var(--rawa-navy-deep);
+  --bg-surface:       var(--rawa-white);
+  --bg-surface-2:     var(--rawa-grey-100);
+  --bg-input:         var(--rawa-white);
+  --bg-input-disabled:var(--rawa-grey-200);
+
+  /* ── GRADIENTS ───────────────────────────────────────────────── */
+  --grad-canvas:
+    radial-gradient(120% 90% at 50% 0%,
+      #0062A8 0%,
+      #004576 38%,
+      #002742 100%);
+  --grad-canvas-flat: var(--rawa-navy);
+  --grad-primary:
+    linear-gradient(180deg, #0080DB 0%, #004576 100%);
+  --grad-primary-hover:
+    linear-gradient(180deg, #0062A8 0%, #002742 100%);
+
+  /* ── FOREGROUND ROLES ────────────────────────────────────────── */
+  --fg-on-canvas:        var(--rawa-white);
+  --fg-on-canvas-muted:  rgba(255,255,255,0.72);
+  --fg-on-surface:       var(--rawa-navy);
+  --fg-on-surface-body:  var(--rawa-ink);
+  --fg-on-surface-muted: var(--rawa-grey-500);
+  --fg-disabled:         var(--rawa-grey-400);
+
+  /* ── BORDERS ─────────────────────────────────────────────────── */
+  --border-input:       var(--rawa-grey-300);
+  --border-input-focus: var(--rawa-blue);
+  --border-error:       var(--rawa-error);
+  --divider:            var(--rawa-grey-200);
+
+  /* ── ELEVATION ───────────────────────────────────────────────── */
+  --shadow-card:
+    0px 4px 10px rgba(0,0,0,0.10),
+    0px 1px 2px rgba(0,0,0,0.06);
+  --shadow-card-lifted:
+    0px 8px 24px rgba(0,0,0,0.16),
+    0px 2px 6px rgba(0,0,0,0.08);
+  --shadow-button:
+    0px 2px 6px rgba(0,0,0,0.16);
+  --shadow-button-active:
+    inset 0px 2px 4px rgba(0,0,0,0.25);
+  --shadow-dropdown:
+    0px 8px 32px rgba(0,0,0,0.25);
+
+  /* ── RADII ───────────────────────────────────────────────────── */
+  --r-xs: 4px;  --r-sm: 8px;  --r-md: 12px;  --r-lg: 16px;
+  --r-xl: 24px; --r-2xl: 32px; --r-pill: 999px;
+
+  /* ── SPACING (4px grid) ──────────────────────────────────────── */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+  --s-16: 64px; --s-20: 80px; --s-24: 96px;
+
+  /* ── TYPOGRAPHY base ─────────────────────────────────────────── */
+  --font-sans: "Plus Jakarta Sans", -apple-system, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
+  --font-fallback-multilang: "Noto Sans", var(--font-sans);   /* §6.1 */
+  --font-office: Arial, Helvetica, sans-serif;                /* Word/PPT */
+
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-extrabold:800;
+
+  /* Type scale — Figma in-product values */
+  --fs-hero: 64px;
+  --fs-h1:   40px;
+  --fs-h2:   32px;
+  --fs-h3:   28px;
+  --fs-h4:   24px;
+  --fs-h5:   22px;
+  --fs-h6:   20px;
+  --fs-body-xl: 22px;
+  --fs-body-lg: 20px;
+  --fs-body-xm: 18px;
+  --fs-body-md: 16px;
+  --fs-body-rg: 14px;
+  --fs-body-sm: 12px;
+  --fs-body-xs: 10px;
+  --fs-tag-lg:  12px;
+  --fs-tag-sm:  10px;
+
+  /* Marketing print tiers — §10 master templates */
+  --fs-print-hero-a4: 55pt;
+  --fs-print-hero-a3: 77pt;
+  --fs-print-hero-a5: 38pt;
+  --fs-print-sub-a4:  16pt;
+  --fs-print-body:    10pt;
+  --fs-print-body-min:9.5pt;
+  --fs-print-srs-min: 13pt;       /* Senior Relationships Services */
+
+  /* Web body sizes — §6.2 */
+  --fs-web-body-desktop: 21px;
+  --fs-web-body-mobile:  16px;
+
+  --lh-tight:  1.15;
+  --lh-snug:   1.30;
+  --lh-normal: 1.45;
+  --lh-loose:  1.60;
+  --lh-print-heading: 1.2;        /* §10.1 */
+  --lh-print-body:    1.4;
+  --lh-web-body:      1.5;        /* §6.2 */
+
+  --tracking-tag: 0.08em;
+}
+
+/* ──────────────────────────────────────────────────────────────────
+   Semantic element styling — apply these classes (or use as recipe).
+   ────────────────────────────────────────────────────────────────── */
+
+.rawa-hero,
+.rawa h1.hero {
+  font: var(--fw-bold) var(--fs-hero)/var(--lh-tight) var(--font-sans);
+  letter-spacing: -0.01em;
+  color: var(--fg-on-surface);
+}
+.rawa-h1 { font: var(--fw-bold)     var(--fs-h1)/var(--lh-tight) var(--font-sans); color: var(--fg-on-surface); }
+.rawa-h2 { font: var(--fw-semibold) var(--fs-h2)/var(--lh-tight) var(--font-sans); color: var(--fg-on-surface); }
+.rawa-h3 { font: var(--fw-semibold) var(--fs-h3)/var(--lh-snug)  var(--font-sans); color: var(--fg-on-surface); }
+.rawa-h4 { font: var(--fw-semibold) var(--fs-h4)/var(--lh-snug)  var(--font-sans); color: var(--fg-on-surface); }
+.rawa-h5 { font: var(--fw-medium)   var(--fs-h5)/var(--lh-snug)  var(--font-sans); color: var(--fg-on-surface); }
+.rawa-h6 { font: var(--fw-medium)   var(--fs-h6)/var(--lh-snug)  var(--font-sans); color: var(--fg-on-surface); }
+
+.rawa-body-xl { font: var(--fw-medium) var(--fs-body-xl)/var(--lh-normal) var(--font-sans); color: var(--fg-on-surface-body); }
+.rawa-body-lg { font: var(--fw-medium) var(--fs-body-lg)/var(--lh-normal) var(--font-sans); color: var(--fg-on-surface-body); }
+.rawa-body    { font: var(--fw-medium) var(--fs-body-md)/var(--lh-normal) var(--font-sans); color: var(--fg-on-surface-body); }
+.rawa-body-rg { font: var(--fw-medium) var(--fs-body-rg)/var(--lh-normal) var(--font-sans); color: var(--fg-on-surface-body); }
+.rawa-body-sm { font: var(--fw-medium) var(--fs-body-sm)/var(--lh-normal) var(--font-sans); color: var(--fg-on-surface-muted); }
+
+/* Marketing/long-form body — Light on white, Regular on Navy (§6.2) */
+.rawa-marketing-body        { font: var(--fw-light)   var(--fs-web-body-desktop)/var(--lh-web-body) var(--font-sans); color: var(--rawa-navy); }
+.rawa-marketing-body-on-navy{ font: var(--fw-regular) var(--fs-web-body-desktop)/var(--lh-web-body) var(--font-sans); color: var(--rawa-white); }
+
+.rawa-tag-lg {
+  font: var(--fw-extrabold) var(--fs-tag-lg)/1 var(--font-sans);
+  letter-spacing: var(--tracking-tag);
+  text-transform: uppercase;
+  color: var(--fg-on-surface);
+}
+.rawa-tag-sm {
+  font: var(--fw-extrabold) var(--fs-tag-sm)/1 var(--font-sans);
+  letter-spacing: var(--tracking-tag);
+  text-transform: uppercase;
+  color: var(--fg-on-surface);
+}
+
+/* On-canvas (dark navy) variants */
+.rawa-on-canvas { color: var(--fg-on-canvas); }
+.rawa-on-canvas .rawa-h1,
+.rawa-on-canvas .rawa-h2,
+.rawa-on-canvas .rawa-h3,
+.rawa-on-canvas .rawa-h4,
+.rawa-on-canvas .rawa-h5,
+.rawa-on-canvas .rawa-h6,
+.rawa-on-canvas .rawa-hero { color: var(--fg-on-canvas); }
+.rawa-on-canvas .rawa-body,
+.rawa-on-canvas .rawa-body-lg,
+.rawa-on-canvas .rawa-body-xl,
+.rawa-on-canvas .rawa-body-rg { color: var(--fg-on-canvas); }

@@ -1,0 +1,59 @@
+/* RAWA brand tokens (copied from the RAWA-Design kit) live in brand/colors_and_type.css.
+   Screen-size type is scaled with vw because this runs on a TV, not a laptop;
+   colours, weights, radii and shadows follow the kit. */
+@import "./brand/colors_and_type.css";
+
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; }
+body {
+  background: var(--bg-canvas);
+  color: var(--fg-on-canvas);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-medium);
+  cursor: none;
+  overflow: hidden;
+}
+
+.stage {
+  height: 100vh;
+  padding: 3vh 5vw 4vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--grad-canvas);
+}
+.logo { display: block; height: 7vh; margin: 0 auto 3vh; }
+.slide { flex: 1; min-height: 0; animation: fade 0.8s ease; display: flex; flex-direction: column; gap: 3vh; }
+@keyframes fade { from { opacity: 0; } }
+
+.tag {
+  font-weight: var(--fw-extrabold);
+  font-size: clamp(14px, 1.1vw, 24px);
+  letter-spacing: var(--tracking-tag);
+  text-transform: uppercase;
+  color: var(--rawa-aqua);
+}
+h1 { margin: 0; font-weight: var(--fw-bold); font-size: clamp(32px, 3.4vw, 72px); line-height: var(--lh-tight); }
+h2 { margin: 0 0 2vh; font-weight: var(--fw-semibold); font-size: clamp(20px, 1.8vw, 40px); color: var(--fg-on-surface); }
+.dim { color: var(--fg-on-canvas-muted); font-weight: var(--fw-medium); }
+.card .dim { color: var(--fg-on-surface-muted); }
+
+/* Vision slide */
+.vision { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4vh; max-width: 80vw; margin: 0 auto; text-align: center; align-items: center; }
+.hero { margin: 0; font-weight: var(--fw-bold); font-size: clamp(44px, 6vw, 130px); line-height: var(--lh-tight); letter-spacing: -0.01em; }
+
+/* Cards: white, no border, shadow only */
+.card { overflow: hidden; background: var(--bg-surface); color: var(--fg-on-surface-body); border-radius: var(--r-lg); box-shadow: var(--shadow-card); padding: 3vh 2.2vw; }
+.tiles { display: flex; gap: 2vw; }
+.tile { flex: 1; font-size: clamp(16px, 1.4vw, 32px); color: var(--fg-on-surface-muted); }
+.tile b { display: block; font-size: clamp(40px, 5vw, 110px); font-weight: var(--fw-bold); color: var(--fg-on-surface); line-height: var(--lh-tight); }
+.tile.good b { color: var(--rawa-success); }
+.tile.bad b { color: var(--rawa-error); }
+.cols { overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; flex: 1; min-height: 0; }
+.list { list-style: none; margin: 0; padding: 0; font-size: clamp(16px, 1.4vw, 32px); line-height: var(--lh-normal); }
+.list li { padding: 0.8vh 0; border-bottom: 1px solid var(--divider); }
+.list li:last-child { border-bottom: 0; }
+
+.quote { margin: auto 0; font-size: clamp(26px, 3vw, 64px); line-height: var(--lh-snug); font-weight: var(--fw-semibold); animation: fade 0.8s ease; }
+
+.progress { height: 6px; background: var(--rawa-aqua); transform-origin: left; animation: grow linear forwards; border-radius: var(--r-pill); }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
