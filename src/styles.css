@@ -1,0 +1,21 @@
+:root { --bg:#0f1b2d; --fg:#f4f7fb; --dim:#8fa3bf; --card:#182a45; --accent:#4fc3a1; --bad:#ef6b6b; }
+* { box-sizing: border-box; }
+html, body, #root { margin:0; height:100%; }
+body { background:var(--bg); color:var(--fg); font-family:"Segoe UI",system-ui,sans-serif; cursor:none; overflow:hidden; }
+.stage { height:100vh; padding:4vh 5vw; display:flex; flex-direction:column; }
+.slide { flex:1; animation:fade .8s ease; display:flex; flex-direction:column; gap:3vh; }
+@keyframes fade { from { opacity:0; transform:translateY(8px); } }
+h1 { margin:0; font-size:clamp(32px,4.5vw,84px); }
+h2 { margin:0 0 1vh; font-size:clamp(20px,2.2vw,44px); color:var(--accent); }
+.big { font-size:clamp(28px,4vw,76px); line-height:1.25; margin:0; }
+.dim { color:var(--dim); font-weight:400; }
+.list { font-size:clamp(20px,2.6vw,50px); line-height:1.6; padding-left:1.2em; margin:0; }
+.list.small { font-size:clamp(16px,1.7vw,34px); line-height:1.5; list-style:none; padding:0; }
+.tiles { display:flex; gap:2vw; }
+.tile { flex:1; background:var(--card); border-radius:16px; padding:3vh 2vw; font-size:clamp(16px,1.8vw,36px); color:var(--dim); }
+.tile b { display:block; font-size:clamp(40px,5.5vw,110px); color:var(--fg); line-height:1.1; }
+.tile.good b { color:var(--accent); } .tile.bad b { color:var(--bad); }
+.cols { display:grid; grid-template-columns:1fr 1fr; gap:3vw; }
+.quote { margin:auto 0; font-size:clamp(28px,3.6vw,70px); line-height:1.3; animation:fade .8s ease; }
+.progress { height:6px; background:var(--accent); transform-origin:left; animation:grow linear forwards; border-radius:3px; }
+@keyframes grow { from { transform:scaleX(0); } to { transform:scaleX(1); } }
