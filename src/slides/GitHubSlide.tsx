@@ -14,36 +14,42 @@ const ago = (iso: string) => {
   return h < 1 ? "just now" : h < 24 ? `${h}h ago` : `${Math.round(h / 24)}d ago`
 }
 
+// Brand rule: no emoji. Commit/PR titles often start with one, so strip them.
+const plain = (s: string) => s.replace(/\p{Extended_Pictographic}️?\s*/gu, "").trim()
+
 export function GitHubSlide() {
   const { data, error } = useApi<Gh>("/api/github")
-  if (!data) return <h1>{error ? "GitHub unavailable" : "Loading..."}</h1>
+  if (!data) return <h1>{error ? "GitHub is unavailable." : "Loading."}</h1>
   const latest = data.runs[0]
   const ok = latest?.conclusion === "success"
   return (
     <>
-      <h1>Development · {data.repo.split("/")[1]}</h1>
+      <div>
+        <div className="tag">Development</div>
+        <h1>{data.repo.split("/")[1]}</h1>
+      </div>
       <div className="tiles">
-        <div className="tile"><b>{data.openPulls}</b>open PRs</div>
-        <div className="tile"><b>{data.openIssues}</b>open issues</div>
-        <div className={`tile ${ok ? "good" : "bad"}`}>
+        <div className="card tile"><b>{data.openPulls}</b>open pull requests</div>
+        <div className="card tile"><b>{data.openIssues}</b>open issues</div>
+        <div className={`card tile ${ok ? "good" : "bad"}`}>
           <b>{latest ? (latest.conclusion ?? latest.status) : "-"}</b>latest build
         </div>
       </div>
       <div className="cols">
-        <section>
+        <section className="card">
           <h2>Recent commits</h2>
-          <ul className="list small">
-            {data.commits.map((c) => (
-              <li key={c.sha}>{c.message} <span className="dim">· {c.author} · {ago(c.date)}</span></li>
+          <ul className="list">
+            {data.commits.slice(0, 4).map((c) => (
+              <li key={c.sha}>{plain(c.message)} <span className="dim">· {c.author} · {ago(c.date)}</span></li>
             ))}
           </ul>
         </section>
-        <section>
+        <section className="card">
           <h2>Open pull requests</h2>
-          <ul className="list small">
-            {data.pulls.length === 0 && <li className="dim">None open</li>}
-            {data.pulls.map((p) => (
-              <li key={p.number}>#{p.number} {p.title} <span className="dim">· {p.author}</span></li>
+          <ul className="list">
+            {data.pulls.length === 0 && <li className="dim">None open.</li>}
+            {data.pulls.slice(0, 4).map((p) => (
+              <li key={p.number}>#{p.number} {plain(p.title)} <span className="dim">· {p.author}</span></li>
             ))}
           </ul>
         </section>

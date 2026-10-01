@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { slides } from "./slides"
+import logo from "./brand/rawa-wordmark-white.svg"
 
 export function App() {
   const [i, setI] = useState(0)
@@ -18,6 +19,7 @@ export function App() {
 
   return (
     <div className="stage">
+      <img className="logo" src={logo} alt="Relationships Australia WA" />
       <main key={slide.id} className="slide">
         {slide.render()}
       </main>
