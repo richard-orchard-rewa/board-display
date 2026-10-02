@@ -10,6 +10,7 @@ and caches data so API tokens never reach the browser.
 | --- | --- | --- |
 | Product vision | `src/slides/VisionSlide.tsx` (edit the copy) | placeholder text |
 | GitHub stats | `Relationships-Australia-WA/feedback` via GitHub REST | live |
+| Iteration | GitHub Project `Relationships-Australia-WA` #1, current Iteration, counts by Status (no titles) | live (needs `read:project`) |
 | Client feedback | `feedback-dash.azurewebsites.net` | **sample data** (see below) |
 
 Order and dwell time are in `src/slides.tsx`.
@@ -19,7 +20,7 @@ Order and dwell time are in `src/slides.tsx`.
 Runtime: Node 24 LTS (minimum 22.9, needed for `--env-file-if-exists`).
 
 ```bash
-cp .env.example .env     # add GITHUB_TOKEN (read access to the repo)
+cp .env.example .env     # add GITHUB_TOKEN (classic: repo + read:project)
 npm install
 npm run dev              # http://localhost:5173 (API on :3001)
 ```
