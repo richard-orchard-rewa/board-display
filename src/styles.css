@@ -57,3 +57,8 @@ h2 { margin: 0 0 2vh; font-weight: var(--fw-semibold); font-size: clamp(20px, 1.
 
 .progress { height: 6px; background: var(--rawa-aqua); transform-origin: left; animation: grow linear forwards; border-radius: var(--r-pill); }
 @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Iteration slide: progress bar */
+.bar { height: 3vh; background: var(--divider); border-radius: var(--r-pill); overflow: hidden; }
+.bar > div { height: 100%; background: var(--rawa-success); border-radius: var(--r-pill); transition: width 0.8s ease; }
+.sub { margin-top: 1vh; font-size: clamp(16px, 1.4vw, 32px); }
