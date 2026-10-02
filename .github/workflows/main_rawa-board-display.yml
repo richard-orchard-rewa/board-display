@@ -9,6 +9,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: deploy-rawa-board-display
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
