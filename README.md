@@ -16,6 +16,8 @@ Order and dwell time are in `src/slides.tsx`.
 
 ## Run
 
+Runtime: Node 24 LTS (minimum 22.9, needed for `--env-file-if-exists`).
+
 ```bash
 cp .env.example .env     # add GITHUB_TOKEN (read access to the repo)
 npm install
