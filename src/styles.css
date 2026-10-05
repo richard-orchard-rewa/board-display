@@ -75,3 +75,7 @@ h2 { margin: 0 0 2vh; font-weight: var(--fw-semibold); font-size: clamp(20px, 1.
 .chart .fill.hi { background: var(--rawa-dark-teal); }
 .chart .val { font-size: clamp(16px, 1.5vw, 34px); font-weight: var(--fw-bold); color: var(--fg-on-surface); margin-bottom: 0.5vh; }
 .chart .lbl { margin-top: 1vh; height: 2.4vh; font-size: clamp(12px, 1.1vw, 24px); color: var(--fg-on-surface-muted); white-space: nowrap; }
+
+/* Feedback slide: trend card fills the space under the score tiles. */
+.trend { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.trend h2 { margin-bottom: 0.5vh; }

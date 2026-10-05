@@ -1,4 +1,5 @@
 import { useApi } from "../useApi"
+import { BarChart, trendBars, trendSummary } from "./BarChart"
 
 interface Fb {
   mock?: boolean
@@ -8,39 +9,11 @@ interface Delivery {
   iterations: { title: string; startDate: string; done: number; total: number; current: boolean }[]
 }
 
-interface Bar {
-  key: string
-  value: number
-  label?: string
-  highlight?: boolean
-}
-
-// Plain CSS bars (not SVG) so the labels scale with the rest of the TV type.
-function BarChart({ bars, showValues }: { bars: Bar[]; showValues: boolean }) {
-  const max = Math.max(1, ...bars.map((b) => b.value))
-  return (
-    <div className={`chart ${showValues ? "" : "dense"}`} role="img">
-      {bars.map((b) => (
-        <div key={b.key} className="col">
-          {showValues && <span className="val">{b.value}</span>}
-          <div className="stem">
-            <div className={`fill ${b.highlight ? "hi" : ""}`} style={{ height: `${(b.value / max) * 100}%` }} />
-          </div>
-          <span className="lbl">{b.label ?? ""}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-const short = (d: string) => new Date(`${d}T00:00:00`).toLocaleDateString("en-AU", { day: "numeric", month: "short" })
-
 export function DashboardSlide() {
   const fb = useApi<Fb>("/api/feedback")
   const dl = useApi<Delivery>("/api/delivery")
   const daily = fb.data?.daily ?? []
-  const total30 = daily.reduce((a, d) => a + d.count, 0)
-  const peak = Math.max(0, ...daily.map((d) => d.count))
+  const { total: total30, peak } = trendSummary(daily)
   const iterations = dl.data?.iterations ?? []
 
   return (
@@ -57,11 +30,7 @@ export function DashboardSlide() {
           </div>
           <BarChart
             showValues={false}
-            bars={daily.map((d, i) => ({
-              key: d.date,
-              value: d.count,
-              label: i === 0 || i === daily.length - 1 || i === 14 ? short(d.date) : "",
-            }))}
+            bars={trendBars(daily)}
           />
         </section>
         <section className="card">
