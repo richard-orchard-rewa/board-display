@@ -9,6 +9,8 @@ interface Fb {
   avgListened: number | null
   avgReceived: number | null
   avgImproved: number | null
+  dexCoverage?: number | null
+  rollout?: { locations: number; programs: number } | null
   comments: string[]
 }
 
@@ -36,6 +38,9 @@ export function FeedbackSlide() {
         <div className="card tile"><b>{score(data.avgListened)}</b>felt listened to (30 days)</div>
         <div className="card tile"><b>{score(data.avgReceived)}</b>received the service they needed (30 days)</div>
         <div className="card tile"><b>{score(data.avgImproved)}</b>situation improved (30 days)</div>
+        {data.dexCoverage != null && (
+          <div className="card tile"><b>{Math.round(data.dexCoverage * 100)}%</b>of clients gave feedback (30 days)</div>
+        )}
       </div>
       {daily.length > 0 && (
         <section className="card trend">
