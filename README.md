@@ -59,6 +59,32 @@ Fallback if the kiosk account isn't workable: a screensaver that launches the
 board after ~5 minutes idle. It only shows while someone is signed in, so the
 lock timeout must be longer than the screensaver delay.
 
+### Azure App Service settings
+
+The Node server serves the built client and the `/api/*` routes, so one App Service runs it all.
+Deploys come from GitHub Actions on every push to `main`
+(`.github/workflows/main_rawa-board-display.yml`).
+
+- **Runtime / start command:** Node 24 LTS; startup command `npm start` (runs `server/index.mjs`).
+- **Port:** the server listens on the `PORT` environment variable that App Service provides
+  (falls back to 3001 locally). No extra setting needed.
+- **App settings** (Configuration > Application settings; use Key Vault references for secrets):
+
+  | Setting | Notes |
+  | --- | --- |
+  | `GITHUB_TOKEN` | **Secret.** Classic: `repo` + `read:project` |
+  | `GITHUB_REPO`, `PROJECT_ORG`, `PROJECT_NUMBER` | Optional; defaults in `.env.example` |
+  | `FEEDBACK_MODE` | `mock` or `live` |
+  | `FEEDBACK_BASE_URL`, `ENTRA_TENANT_ID`, `ENTRA_CLIENT_ID`, `FEEDBACK_API_SCOPE` | Needed for `live` |
+  | `ENTRA_CLIENT_SECRET` | **Secret.** Needed for `live` |
+
+- **Health check:** set Monitoring > Health check path to `/healthz`. It returns `200 ok` without
+  calling any upstream API, so a GitHub or feedback outage doesn't mark the app unhealthy.
+- **Access control (not applied yet):** Networking > Access restrictions > add an Allow rule for the
+  office public IP; Azure then denies everyone else. Leave the SCM (deployment) site rules alone so
+  GitHub Actions deploys keep working. Note the site can't be viewed from home or mobile once
+  restricted. Entra sign-in (Easy Auth) is the alternative.
+
 ### Live setup (Azure)
 
 The board is live at
