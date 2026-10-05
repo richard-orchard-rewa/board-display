@@ -59,12 +59,23 @@ Fallback if the kiosk account isn't workable: a screensaver that launches the
 board after ~5 minutes idle. It only shows while someone is signed in, so the
 lock timeout must be longer than the screensaver delay.
 
-### Interim setup (local, until the Azure version is live)
+### Live setup (Azure)
 
-1. Create a Task Scheduler task "At log on" running `npm start` in this folder.
-2. Add a second startup item:
-   `msedge --kiosk http://localhost:3001 --edge-kiosk-type=fullscreen --no-first-run`
-3. The page reloads itself hourly and keeps showing the last good data if an API call fails.
+The board is live at
+`https://rawa-board-display-gebug8arewefhhfb.australiaeast-01.azurewebsites.net/`.
+The TV PC (`RAWA-8CC5490R6V`) only needs a browser: no Node, token or local server.
+
+1. IT creates the kiosk account (standard, non-admin) with auto sign-in at boot.
+2. On sign-in it launches Edge full-screen at the URL above:
+   `msedge --kiosk <url> --edge-kiosk-type=fullscreen --no-first-run`
+   (or Assigned Access single-app kiosk mode for that account only).
+3. Outbound HTTPS (443) to the App Service only. Nothing inbound.
+4. The page rotates slides, polls its API every minute, reloads itself hourly, and keeps
+   showing the last good data if an API call fails.
+
+The PC is not locked to the kiosk: staff can sign out or Switch user and log in with their
+own domain account (Shift at boot also bypasses auto sign-in). The nightly restart returns
+it to the board account.
 
 ## Feedback data - open decisions
 
