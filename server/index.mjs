@@ -248,6 +248,11 @@ http
   .createServer(async (req, res) => {
     const url = new URL(req.url, "http://x")
     try {
+      // Liveness probe for App Service health check; deliberately touches no upstream API.
+      if (url.pathname === "/healthz") {
+        res.writeHead(200, { "content-type": "text/plain" }).end("ok")
+        return
+      }
       const loaders = { "/api/github": loadGithub, "/api/feedback": loadFeedback, "/api/iteration": loadIteration, "/api/delivery": loadDelivery }
       if (loaders[url.pathname]) {
         const data = await loaders[url.pathname]()
