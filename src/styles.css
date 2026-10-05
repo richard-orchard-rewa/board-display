@@ -85,3 +85,7 @@ h2 { margin: 0 0 2vh; font-weight: var(--fw-semibold); font-size: clamp(20px, 1.
 /* Feedback slide: trend card fills the space under the score tiles. */
 .trend { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 .trend h2 { margin-bottom: 0.5vh; }
+
+/* Last-updated indicator: small and quiet; turns golden when the board is offline. */
+.updated { position: fixed; right: 2vw; bottom: 1.2vh; font-size: 0.9vw; opacity: 0.55; }
+.updated.stale { opacity: 1; color: var(--rawa-warning); }
