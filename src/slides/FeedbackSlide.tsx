@@ -4,11 +4,13 @@ import { useApi } from "../useApi"
 interface Fb {
   mock?: boolean
   totalResponses: number
-  avgListened: number
-  avgReceived: number
-  avgImproved: number
+  avgListened: number | null
+  avgReceived: number | null
+  avgImproved: number | null
   comments: string[]
 }
+
+const score = (n: number | null) => (n === null ? "-" : n.toFixed(1))
 
 export function FeedbackSlide() {
   const { data, error } = useApi<Fb>("/api/feedback")
@@ -27,9 +29,9 @@ export function FeedbackSlide() {
       </div>
       <div className="tiles">
         <div className="card tile"><b>{data.totalResponses}</b>responses</div>
-        <div className="card tile"><b>{data.avgListened.toFixed(1)}</b>felt listened to</div>
-        <div className="card tile"><b>{data.avgReceived.toFixed(1)}</b>received the service they needed</div>
-        <div className="card tile"><b>{data.avgImproved.toFixed(1)}</b>situation improved</div>
+        <div className="card tile"><b>{score(data.avgListened)}</b>felt listened to (30 days)</div>
+        <div className="card tile"><b>{score(data.avgReceived)}</b>received the service they needed (30 days)</div>
+        <div className="card tile"><b>{score(data.avgImproved)}</b>situation improved (30 days)</div>
       </div>
       {comment && <blockquote key={c} className="quote">“{comment}”</blockquote>}
     </>

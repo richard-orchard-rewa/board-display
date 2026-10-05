@@ -175,11 +175,51 @@ const loadGithub = () =>
   })
 
 // Feedback comes from feedback-dash, which sits behind Entra ID (Easy Auth).
-// "mock" returns sample data; "live" needs an app-only token + allow-list
-// entry on that app (see README) and is not implemented yet.
+// "mock" returns sample data. "live" calls feedback-dash's aggregates-only
+// /api/display/summary with an app-only Entra token (client credentials) -
+// see README. No comments are fetched or shown.
+let token = { value: null, expiresAt: 0 }
+async function feedbackToken() {
+  if (token.value && Date.now() < token.expiresAt - 60_000) return token.value
+  const { ENTRA_TENANT_ID, ENTRA_CLIENT_ID, ENTRA_CLIENT_SECRET, FEEDBACK_API_SCOPE } = process.env
+  if (!ENTRA_TENANT_ID || !ENTRA_CLIENT_ID || !ENTRA_CLIENT_SECRET || !FEEDBACK_API_SCOPE) {
+    throw new Error("FEEDBACK_MODE=live needs ENTRA_TENANT_ID, ENTRA_CLIENT_ID, ENTRA_CLIENT_SECRET and FEEDBACK_API_SCOPE")
+  }
+  const res = await fetch(`https://login.microsoftonline.com/${ENTRA_TENANT_ID}/oauth2/v2.0/token`, {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: ENTRA_CLIENT_ID,
+      client_secret: ENTRA_CLIENT_SECRET,
+      scope: FEEDBACK_API_SCOPE,
+    }),
+  })
+  if (!res.ok) throw new Error(`Entra token request failed (${res.status})`)
+  const json = await res.json()
+  token = { value: json.access_token, expiresAt: Date.now() + json.expires_in * 1000 }
+  return token.value
+}
+
 const loadFeedback = () =>
   cached("feedback", async () => {
-    if (process.env.FEEDBACK_MODE === "live") throw new Error("FEEDBACK_MODE=live not implemented yet")
+    if (process.env.FEEDBACK_MODE === "live") {
+      const base = process.env.FEEDBACK_BASE_URL ?? "https://feedback-dash.azurewebsites.net"
+      const res = await fetch(`${base}/api/display/summary`, {
+        headers: { authorization: `Bearer ${await feedbackToken()}` },
+      })
+      if (!res.ok) throw new Error(`feedback-dash summary failed (${res.status})`)
+      const d = await res.json()
+      return {
+        mock: false,
+        daily: d.dailyResponses ?? [],
+        totalResponses: d.totalResponses,
+        avgListened: d.averages30Days.serviceListened,
+        avgReceived: d.averages30Days.serviceReceived,
+        avgImproved: d.averages30Days.situationImproved,
+        comments: [],
+        updatedAt: d.generatedAt,
+      }
+    }
     // Sample responses-per-day for the last 30 days (oldest first), until the live endpoint provides it.
     const daily = Array.from({ length: 30 }, (_, i) => {
       const d = new Date(Date.now() - (29 - i) * 864e5)
