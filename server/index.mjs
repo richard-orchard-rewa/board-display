@@ -61,7 +61,7 @@ const STATUSES = ["Backlog", "Ready", "In progress", "In review", "Done"]
 const ITEMS_QUERY = `query($org:String!, $number:Int!, $after:String) {
   organization(login:$org) { projectV2(number:$number) {
     field: field(name:"Iteration") { ... on ProjectV2IterationField {
-      configuration { iterations { title startDate duration } } } }
+      configuration { iterations { title startDate duration } completedIterations { title startDate duration } } } }
     items(first:100, after:$after) {
       pageInfo { hasNextPage endCursor }
       nodes {
@@ -72,18 +72,47 @@ const ITEMS_QUERY = `query($org:String!, $number:Int!, $after:String) {
   } }
 }`
 
-const loadIteration = () =>
-  cached("iteration", async () => {
+// One paginated fetch of every project item, shared by the iteration and delivery endpoints.
+const loadProject = () =>
+  cached("project", async () => {
     let after = null
     let iterations = []
     const items = []
     do {
       const { organization } = await ghGraphql(ITEMS_QUERY, { org: PROJECT_ORG, number: PROJECT_NUMBER, after })
       const project = organization.projectV2
-      iterations = project.field.configuration.iterations
+      iterations = [...project.field.configuration.completedIterations, ...project.field.configuration.iterations]
       items.push(...project.items.nodes)
       after = project.items.pageInfo.hasNextPage ? project.items.pageInfo.endCursor : null
     } while (after)
+    return { iterations, items }
+  })
+
+// Items done per iteration for the most recent iterations that have started, oldest first.
+const loadDelivery = () =>
+  cached("delivery", async () => {
+    const { iterations, items } = await loadProject()
+    const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Australia/Perth" }).format(new Date())
+    const started = iterations.filter((i) => i.startDate <= today).sort((a, b) => a.startDate.localeCompare(b.startDate))
+    const recent = started.slice(-6)
+    return {
+      iterations: recent.map((it) => {
+        const mine = items.filter((i) => i.iteration?.title === it.title)
+        return {
+          title: it.title,
+          startDate: it.startDate,
+          done: mine.filter((i) => i.status?.name === "Done").length,
+          total: mine.length,
+          current: it === started[started.length - 1],
+        }
+      }),
+      updatedAt: new Date().toISOString(),
+    }
+  })
+
+const loadIteration = () =>
+  cached("iteration", async () => {
+    const { iterations, items } = await loadProject()
 
     // Dates are calendar dates; compare in the office's timezone.
     const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Australia/Perth" }).format(new Date())
@@ -146,13 +175,60 @@ const loadGithub = () =>
   })
 
 // Feedback comes from feedback-dash, which sits behind Entra ID (Easy Auth).
-// "mock" returns sample data; "live" needs an app-only token + allow-list
-// entry on that app (see README) and is not implemented yet.
+// "mock" returns sample data. "live" calls feedback-dash's aggregates-only
+// /api/display/summary with an app-only Entra token (client credentials) -
+// see README. No comments are fetched or shown.
+let token = { value: null, expiresAt: 0 }
+async function feedbackToken() {
+  if (token.value && Date.now() < token.expiresAt - 60_000) return token.value
+  const { ENTRA_TENANT_ID, ENTRA_CLIENT_ID, ENTRA_CLIENT_SECRET, FEEDBACK_API_SCOPE } = process.env
+  if (!ENTRA_TENANT_ID || !ENTRA_CLIENT_ID || !ENTRA_CLIENT_SECRET || !FEEDBACK_API_SCOPE) {
+    throw new Error("FEEDBACK_MODE=live needs ENTRA_TENANT_ID, ENTRA_CLIENT_ID, ENTRA_CLIENT_SECRET and FEEDBACK_API_SCOPE")
+  }
+  const res = await fetch(`https://login.microsoftonline.com/${ENTRA_TENANT_ID}/oauth2/v2.0/token`, {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: ENTRA_CLIENT_ID,
+      client_secret: ENTRA_CLIENT_SECRET,
+      scope: FEEDBACK_API_SCOPE,
+    }),
+  })
+  if (!res.ok) throw new Error(`Entra token request failed (${res.status})`)
+  const json = await res.json()
+  token = { value: json.access_token, expiresAt: Date.now() + json.expires_in * 1000 }
+  return token.value
+}
+
 const loadFeedback = () =>
   cached("feedback", async () => {
-    if (process.env.FEEDBACK_MODE === "live") throw new Error("FEEDBACK_MODE=live not implemented yet")
+    if (process.env.FEEDBACK_MODE === "live") {
+      const base = process.env.FEEDBACK_BASE_URL ?? "https://feedback-dash.azurewebsites.net"
+      const res = await fetch(`${base}/api/display/summary`, {
+        headers: { authorization: `Bearer ${await feedbackToken()}` },
+      })
+      if (!res.ok) throw new Error(`feedback-dash summary failed (${res.status})`)
+      const d = await res.json()
+      return {
+        mock: false,
+        daily: d.dailyResponses ?? [],
+        totalResponses: d.totalResponses,
+        avgListened: d.averages30Days.serviceListened,
+        avgReceived: d.averages30Days.serviceReceived,
+        avgImproved: d.averages30Days.situationImproved,
+        comments: [],
+        updatedAt: d.generatedAt,
+      }
+    }
+    // Sample responses-per-day for the last 30 days (oldest first), until the live endpoint provides it.
+    const daily = Array.from({ length: 30 }, (_, i) => {
+      const d = new Date(Date.now() - (29 - i) * 864e5)
+      const weekend = [0, 6].includes(d.getDay())
+      return { date: d.toISOString().slice(0, 10), count: weekend ? (i % 3) : 6 + ((i * 7) % 9) }
+    })
     return {
       mock: true,
+      daily,
       totalResponses: 412,
       avgListened: 4.6,
       avgReceived: 4.4,
@@ -172,7 +248,7 @@ http
   .createServer(async (req, res) => {
     const url = new URL(req.url, "http://x")
     try {
-      const loaders = { "/api/github": loadGithub, "/api/feedback": loadFeedback, "/api/iteration": loadIteration }
+      const loaders = { "/api/github": loadGithub, "/api/feedback": loadFeedback, "/api/iteration": loadIteration, "/api/delivery": loadDelivery }
       if (loaders[url.pathname]) {
         const data = await loaders[url.pathname]()
         res.writeHead(200, { "content-type": "application/json" }).end(JSON.stringify(data))
