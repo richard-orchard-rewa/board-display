@@ -103,6 +103,16 @@ The PC is not locked to the kiosk: staff can sign out or Switch user and log in 
 own domain account (Shift at boot also bypasses auto sign-in). The nightly restart returns
 it to the board account.
 
+## Offline behaviour
+
+A service worker (`public/sw.js`) caches the app shell and the last good API responses
+(network-first, 8s timeout). If the PC loses its connection, including during the hourly
+reload or after a reboot, the board keeps showing the last good data instead of an error page.
+A small "Updated hh:mm" note sits bottom right; after 5 minutes without a live refresh it turns
+golden and reads "Offline. Showing data from hh:mm". The worker only runs in production builds
+(https or localhost) and caches nothing until the page has been loaded once online. After a
+new deploy, the first reload while online picks up the new build.
+
 ## Feedback data - open decisions
 
 `feedback-dash` is behind Entra ID sign-in (Easy Auth) and only allows
