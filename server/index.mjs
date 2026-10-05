@@ -216,6 +216,10 @@ const loadFeedback = () =>
         avgListened: d.averages30Days.serviceListened,
         avgReceived: d.averages30Days.serviceReceived,
         avgImproved: d.averages30Days.situationImproved,
+        // DEX satisfaction coverage (0-1), last 30 days; null until feedback-dash provides it.
+        dexCoverage: d.dexCoverage?.percentage ?? null,
+        // Live rollout counts; null until feedback-dash provides them.
+        rollout: d.rollout ?? null,
         comments: [],
         updatedAt: d.generatedAt,
       }
@@ -233,6 +237,8 @@ const loadFeedback = () =>
       avgListened: 4.6,
       avgReceived: 4.4,
       avgImproved: 4.1,
+      dexCoverage: 0.16,
+      rollout: { locations: 8, programs: 5 },
       comments: [
         "I felt really heard and not judged.",
         "Booking was easy and the reminder text was helpful.",

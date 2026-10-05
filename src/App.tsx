@@ -31,6 +31,17 @@ export function App() {
     return () => clearTimeout(id)
   }, [i, slide.seconds])
 
+  // Arrow keys step through slides; the auto-advance timer restarts on each change.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
+      if (e.key === "ArrowRight") setI((n) => (n + 1) % slides.length)
+      else if (e.key === "ArrowLeft") setI((n) => (n - 1 + slides.length) % slides.length)
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [])
+
   // Reload hourly so a long-running kiosk picks up new builds and recovers from leaks.
   useEffect(() => {
     const id = setTimeout(() => location.reload(), 60 * 60 * 1000)
