@@ -26,10 +26,27 @@ Production / TV: `npm run build && npm start`, then open `http://localhost:3001`
 
 ## Kiosk setup on the TV PC
 
-1. Create a Task Scheduler task "At log on" running `npm start` in this folder.
-2. Add a second startup item:
-   `msedge --kiosk http://localhost:3001 --edge-kiosk-type=fullscreen --no-first-run`
-3. The page reloads itself hourly and keeps showing the last good data if an API call fails.
+The display is hosted on Azure App Service, so the TV PC (`RAWA-8CC5490R6V`) only
+needs a browser. No Node, token or local server is required on it.
+
+1. IT creates a dedicated standard (non-admin) kiosk account that auto-logs on at boot.
+2. On sign-in, that account launches Edge full-screen at the hosted URL:
+   `msedge --kiosk https://rawa-board-display-gebug8arewefhhfb.australiaeast-01.azurewebsites.net/ --edge-kiosk-type=fullscreen --no-first-run`
+   (or Windows Assigned Access single-app kiosk mode for that account only).
+3. Network: outbound HTTPS (443) from the PC to the App Service. Nothing inbound.
+4. Power: no sleep or lock; power on after an outage; update restarts outside business hours.
+5. The page reloads itself hourly, polls its API every minute, and keeps showing the last
+   good data if an API call fails.
+
+### Using the PC for something else
+
+The PC is not locked to the kiosk. Staff can sign out of the kiosk account (Ctrl+Alt+Del >
+Sign out, or Switch user) and log in with their own domain account as normal. Holding Shift
+during boot also bypasses auto-logon. Signing out of the kiosk account ends the display, so
+restart the PC (or sign the kiosk account back in) afterwards to resume it.
+
+For local development / running the server on a PC yourself: `npm run build && npm start`,
+then open `http://localhost:3001`.
 
 ## Feedback data - open decisions
 
